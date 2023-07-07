@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Welcome to the Dashboard</h2>
+    <h3>List of Forms:</h3>
+    <ul>
+        {% for form in forms %}
+            <li><a href="/form/{{ form.name }}">{{ form.name }}</a></li>
+        {% empty %}
+            <li>No forms found.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Create a New Form:</h3>
+    <form method="POST" action="/dashboard">
+        {% csrf_token %}
+        <input type="text" name="form_name" placeholder="Form Name" required>
+        <button type="submit">Create</button>
+    </form>
+</body>
+</html>

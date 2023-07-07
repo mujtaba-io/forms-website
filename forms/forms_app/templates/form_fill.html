@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Fill</title>
+</head>
+<body>
+    <h2>Form Fill</h2>
+    <form method="POST" action="/form_fill/{{ form_name }}">
+        {% csrf_token %}
+        <h3>List of Questions:</h3>
+        {% for question in questions %}
+            <p>{{ question.text }}</p>
+            {% if question.type == 'checkbox' %}
+                {% for choice in question.choice_set.all %}
+                    <input type="checkbox" name="question_{{ question.pk }}_responses" value="{{ choice.pk }}"> {{ choice.text }}<br>
+                {% endfor %}
+                <input type="text" name="question_{{ question.pk }}_other_response" placeholder="Other"><br>
+            {% elif question.type == 'radio' %}
+                {% for choice in question.choice_set.all %}
+                    <input type="radio" name="question_{{ question.pk }}_responses" value="{{ choice.pk }}" {% if forloop.first %}checked{% endif %}> {{ choice.text }}<br>
+                {% endfor %}
+            {% else %}
+                <input type="text" name="question_{{ question.pk }}_responses"><br>
+            {% endif %}
+        {% empty %}
+            <p>No questions found.</p>
+        {% endfor %}
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

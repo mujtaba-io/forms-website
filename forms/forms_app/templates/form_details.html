@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Form Details</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#response_type").change(function() {
+                var selectedType = $(this).val();
+                if (selectedType === "checkbox" || selectedType === "radio") {
+                    $("#additionalInput").show();
+                } else {
+                    $("#additionalInput").hide();
+                }
+            });
+
+            $("#addButton").click(function() {
+                var selectedType = $("#response_type").val();
+                var additionalInputValue = $("#additionalInputField").val();
+
+                if (additionalInputValue.trim() !== "") {
+                    if (selectedType === "checkbox") {
+                        $("#additionalInputs").append('<input type="checkbox" name="checkbox_responses" value="' + additionalInputValue + '"> ' + additionalInputValue + '<br>');
+                    } else if (selectedType === "radio") {
+                        $("#additionalInputs").append('<input type="radio" name="radio_responses" value="' + additionalInputValue + '"> ' + additionalInputValue + '<br>');
+                    }
+
+                    $("#additionalInputField").val("");
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h2>Form Details</h2>
+    <h3>Form Name: <a href="/form/{{ form.name }}">{{ form.name }}</a></h3>
+    <h3>List of Questions:</h3>
+    <ul>
+        {% for question in questions %}
+            <li>{{ question.text }} - Type: {{ question.type }}</li>
+        {% empty %}
+            <li>No questions found.</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Add a New Question:</h3>
+    <form method="POST" action="/form/{{ form.name }}">
+        {% csrf_token %}
+        <input type="text" name="question_text" placeholder="Question Text" required><br><br>
+        <select name="question_type" id="response_type" required>
+            <option value="checkbox">Checkbox Responses</option>
+            <option value="radio">Radio Button Responses</option>
+            <option value="text">Text Responses</option>
+        </select><br><br>
+        <div id="additionalInput" style="display: none;">
+            <input type="text" id="additionalInputField" placeholder="Additional Input">
+            <button type="button" id="addButton">Add</button>
+        </div>
+        <div id="additionalInputs"></div>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
